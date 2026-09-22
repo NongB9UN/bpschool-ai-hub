@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School AI Executive Dashboard — ระบบสรุปงานโรงเรียนสำหรับผู้บริหาร</title>
+  <meta name="description" content="ระบบ AI สรุปและวิเคราะห์ข้อมูลแชทโรงเรียนเพื่อทำรายงานสรุปประจำวันสำหรับ ผอ. และผู้บริหาร">
+  
+  <!-- Google Fonts: Prompt & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand-area">
+        <div class="brand-icon">🏫</div>
+        <div>
+          <div class="brand-title">School AI Executive Hub</div>
+          <div class="brand-subtitle">ระบบสรุปงานและวิเคราะห์ข้อมูลโรงเรียนสำหรับผู้บริหาร</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button id="theme-toggle" class="btn btn-outline" style="padding:0.45rem 0.9rem; font-size:0.85rem;" title="สลับโหมดมืด/สว่าง">
+          🌙 มืด
+        </button>
+        <button id="btn-copy-line" class="btn btn-success" title="คัดลอกข้อความเพื่อส่งเข้า LINE ผอ. ทันที">
+          <span>📲</span> คัดลอกส่ง LINE
+        </button>
+        <button id="btn-preview-line" class="btn btn-outline" title="ดูตัวอย่างข้อความ LINE">
+          <span>👁️</span> ดูตัวอย่างแชท
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Control & Date Selector Bar -->
+    <section class="control-bar">
+      <div class="date-selector-group">
+        <label for="date-select" style="font-weight:600; font-size:0.92rem; color:var(--text-muted);">
+          📅 เลือกวันที่สรุปงาน:
+        </label>
+        <select id="date-select" class="date-pill-select">
+          <!-- Populated by JS -->
+        </select>
+      </div>
+      <div class="quick-pills">
+        <span style="font-size:0.82rem; color:var(--text-light); align-self:center; margin-right:0.25rem;">ตัวอย่างเหตุการณ์:</span>
+        <button class="quick-btn active" data-date="2026-09-01">1 ก.ย. 69 (เมื่อวาน/ตรวจข้อสอบ)</button>
+        <button class="quick-btn" data-date="2026-08-18">18 ส.ค. 69 (สัปดาห์วิทย์)</button>
+        <button class="quick-btn" data-date="2026-07-08">8 ก.ค. 69 (ตรวจห้องเรียน)</button>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="overview">📊 ภาพรวม & รายงาน ผอ.</button>
+      <button class="tab-btn" data-tab="incidents">🚨 สุขภาพ & เฝ้าระวังด่วน</button>
+      <button class="tab-btn" data-tab="academic">📚 งานวิชาการ & ข้อสอบ</button>
+      <button class="tab-btn" data-tab="tasks">📋 Action Matrix & งานติดตาม</button>
+      <button class="tab-btn" data-tab="ingest">🧠 วิเคราะห์แชทสด (Live AI)</button>
+    </nav>
+
+    <!-- Tab 1: Overview & Executive Briefing -->
+    <div id="tab-overview" class="tab-pane" style="display:block;">
+      
+      <!-- Executive Briefing Banner -->
+      <section class="briefing-banner">
+        <div class="briefing-header">
+          <div class="briefing-title-area">
+            <h2><span>🎖️</span> บทสรุปสำหรับผู้บริหาร (Executive Daily Briefing)</h2>
+            <span id="briefing-date-badge" class="briefing-date-badge">วันอังคารที่ 1 กันยายน 2569</span>
+          </div>
+        </div>
+        <div id="briefing-text" class="briefing-summary-text">
+          กำลังโหลดบทสรุปสำหรับผู้บริหาร...
+        </div>
+        <div class="briefing-actions">
+          <button class="btn btn-success" onclick="document.getElementById('btn-copy-line').click()">
+            <span>📋</span> คัดลอกบทสรุปส่งห้อง ผอ.
+          </button>
+          <button class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.4);" onclick="window.print()">
+            <span>🖨️</span> พิมพ์รายงาน (Print PDF)
+          </button>
+        </div>
+      </section>
+
+      <!-- KPI Stat Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card kpi-danger">
+          <div class="kpi-icon-box">🚨</div>
+          <div class="kpi-details">
+            <div id="kpi-urgent" class="kpi-value">0</div>
+            <div class="kpi-label">ประเด็นด่วน / เฝ้าระวัง</div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-primary">
+          <div class="kpi-icon-box">📚</div>
+          <div class="kpi-details">
+            <div id="kpi-academic" class="kpi-value">0</div>
+            <div class="kpi-label">งานวิชาการ & ข้อสอบ</div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-warning">
+          <div class="kpi-icon-box">🏫</div>
+          <div class="kpi-details">
+            <div id="kpi-ops" class="kpi-value">0</div>
+            <div class="kpi-label">งานสุขอนามัย & สถานที่</div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-success">
+          <div class="kpi-icon-box">📈</div>
+          <div class="kpi-details">
+            <div id="kpi-attendance" class="kpi-value" style="font-size:1.2rem;">ครบถ้วน</div>
+            <div class="kpi-label">การส่งสถิติประจำวัน</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard 2-Columns Grid -->
+      <div class="dashboard-grid">
+        
+        <!-- Left Column: Urgent Incidents & Health -->
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>⚠️</span> ประเด็นด่วน & ข้อควรเฝ้าระวัง
+            </div>
+            <span class="card-badge badge-danger">Priority High</span>
+          </div>
+          <div id="incidents-list" class="incident-list">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Right Column: Academic & Exams -->
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📖</span> ความคืบหน้างานวิชาการ & แนวข้อสอบ
+            </div>
+            <span class="card-badge badge-primary">Curriculum</span>
+          </div>
+          <div id="academic-grid" class="exam-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Tab 2: Incidents Detail Tab -->
+    <div id="tab-incidents" class="tab-pane" style="display:none;">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title"><span>🏥</span> ศูนย์เฝ้าระวังสุขภาพ ความปลอดภัย และของหาย</div>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:1.25rem;">
+          รวบรวมข้อความแจ้งเด็กป่วย, ประวัติการแพ้ยา, การรับเด็กกลับก่อนเวลา, อุบัติเหตุ และมาตรการสุขอนามัยในโรงเรียน
+        </p>
+        <div id="incidents-detail-list" class="incident-list">
+          <!-- Will mirror incidents-list -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Academic Tracking Tab -->
+    <div id="tab-academic" class="tab-pane" style="display:none;">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title"><span>📝</span> รายการแนวข้อสอบกลางภาค และแผนการจัดการเรียนรู้</div>
+        </div>
+        <div id="academic-detail-grid" class="exam-grid">
+          <!-- Will mirror academic-grid -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Tasks & Action Matrix -->
+    <div id="tab-tasks" class="tab-pane" style="display:none;">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title"><span>📌</span> Task & Action Matrix (ผู้รับผิดชอบและกำหนดส่ง)</div>
+          <span class="card-badge badge-warning">Action Items</span>
+        </div>
+        <div class="task-table-wrapper">
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th>รายการภารกิจ / สิ่งที่ต้องติดตาม</th>
+                <th>ผู้รับผิดชอบ</th>
+                <th>กำหนดส่ง / เวลา</th>
+                <th>สถานะ</th>
+              </tr>
+            </thead>
+            <tbody id="task-tbody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Live Ingestion Tool -->
+    <div id="tab-ingest" class="tab-pane" style="display:none;">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title"><span>🧠</span> วางแชท LINE เพื่อประมวลผลด้วย AI (Live Parsing)</div>
+          <span class="card-badge badge-purple">AI Engine</span>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem;">
+          คุณสามารถ Export แชทจากกลุ่ม LINE (ไฟล์ .txt หรือก๊อปปี้ข้อความดิบ) มาวางในช่องนี้ แล้วกด <strong>"ประมวลผลด้วย AI"</strong> ระบบจะสกัดประเด็นสำคัญและสร้าง Dashboard ให้ทันที!
+        </p>
+        <div class="ingest-box">
+          <label style="font-weight:600; font-size:0.92rem;">วางข้อความแชทที่นี่:</label>
+          <textarea id="raw-chat-input" class="ingest-textarea" placeholder="2026.09.02 Wednesday&#10;07:41 ครูเจี๊ยบ ถ้านักเรียนตัวร้อนให้คุณครูรีบโทรแจ้ง...&#10;08:35 ครูพิมพ์ คุณครูลงสถิติด้วยนะคะ"></textarea>
+          <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+            <button id="btn-process-chat" class="btn btn-primary">
+              <span>⚡</span> ประมวลผลและสร้าง Dashboard ทันที
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal for LINE Preview -->
+  <div id="line-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="display:flex; align-items:center; gap:0.5rem; font-size:1.15rem;">
+          <span>📲</span> รูปแบบข้อความสำหรับส่งเข้า LINE ผู้บริหาร
+        </h3>
+        <button id="btn-close-modal" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="line-preview-text" class="line-preview-box">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-copy" class="btn btn-success">
+          <span>📋</span> คัดลอกข้อความ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 School AI Executive Dashboard — พัฒนาเพื่อการบริหารจัดการสถานศึกษาอย่างมีประสิทธิภาพ</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/sampleData.js"></script>
+  <script src="js/chatParser.js"></script>
+  <script src="js/exporter.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
