@@ -4,7 +4,8 @@
   "description": "ระบบ AI สรุปงานและแดชบอร์ดโรงเรียนสำหรับผู้บริหาร (BPSchool)",
   "main": "index.html",
   "scripts": {
-    "dev": "python -m http.server 8080"
+    "dev": "python -m http.server 8080",
+    "test": "node --test"
   },
   "keywords": [
     "school",
@@ -14,5 +15,6 @@
     "gemini"
   ],
   "author": "BPSchool IT Team",
-  "license": "MIT"
+  "license": "MIT",
+  "type": "module"
 }
