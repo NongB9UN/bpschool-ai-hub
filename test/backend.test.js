@@ -15,8 +15,8 @@ test('Bangkok day starts on previous UTC date and rejects invalid calendar dates
  assert.equal(bangkokDate(new Date('2026-09-21T17:01:00Z')),'2026-09-22');
  assert.throws(()=>dayRange('2026-02-30')); assert.throws(()=>dayRange('yesterday'));
 });
-test('empty reports do not invent a healthy outcome',()=>{
- assert.match(summarize([],'2026-09-22'),/ไม่มีข้อมูล/); assert.doesNotMatch(summarize([],'2026-09-22'),/สุขภาพนักเรียนปกติ/);
+test('empty reports do not invent a healthy outcome',async()=>{
+ assert.match(await summarize([],'2026-09-22'),/ไม่มีข้อมูล/); assert.doesNotMatch(await summarize([],'2026-09-22'),/สุขภาพนักเรียนปกติ/);
 });
 test('unauthorized summary never calls database; authenticated push stays disabled',async()=>{
  process.env.CRON_SECRET='test-admin'; delete process.env.LINE_PUSH_ENABLED;
